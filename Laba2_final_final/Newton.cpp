@@ -57,6 +57,34 @@ void J(double** a, double x1, double x2)
     a[1][1] = func22(x1, x2);
 }
 
+double funcJ11(double x1, double x2)
+{
+    return 4 * x1 - x2 - 5;
+}
+
+double funcJ12(double x1, double x2)
+{
+    return -x1;
+}
+
+double funcJ21(double x1, double x2)
+{
+    return 1 + 3. / x1;
+}
+
+double funcJ22(double x1, double x2)
+{
+    return -2 * x2;
+}
+
+void J2(double** a, double x1, double x2)
+{
+    a[0][0] = funcJ11(x1, x2);
+    a[0][1] = funcJ12(x1, x2);
+    a[1][0] = funcJ21(x1, x2);
+    a[1][1] = funcJ22(x1, x2);
+}
+
 void minus_vector_nevjazki(double* F, double x1, double x2)
 {
     F[0] = -function1(x1, x2);
@@ -185,14 +213,93 @@ double* newton(int n, double x1, double x2)
 
     } while (delta1 > eps || delta2 > eps);
 
-return resh;
+    return resh;
+}
+
+double* newton2(int n, double x1, double x2)
+{
+    double** Jako;
+    Jako = initial(n, n);
+
+    double** newmatrix;
+    newmatrix = initial(n, n + 1);
+
+    double* F = new double[n];
+    double* delta = new double[n];
+    double* resh = new double[n];
+    resh[0] = x1;
+    resh[1] = x2;
+    double delta1, delta2;
+    int k = 1;
+
+    cout << setw(10) << "x1" << setw(10) << "x2" << setw(17) << "delta1" << setw(17) << "delta2" << setw(6) << "k";
+    do
+    {
+        minus_vector_nevjazki(F, x1, x2);
+        J2(Jako, x1, x2);
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                newmatrix[i][j] = Jako[i][j];
+            }
+            newmatrix[i][n] = F[i];
+        }
+
+        delta = gauss(newmatrix, n, n + 1);
+        for (int i = 0; i < n; i++)
+            resh[i] += delta[i];
+
+        double max1 = 0;
+        double max2 = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (abs(F[i]) > max1)
+                max1 = abs(F[i]);
+
+            if (abs(resh[i]) < 1)
+            {
+                if (abs(delta[i]) > max2)
+                    max2 = abs(delta[i]);
+            }
+            if (abs(delta[i] >= 1))
+            {
+                if (abs(delta[i] / resh[i]) > max2)
+                    max2 = abs(delta[i]);
+            }
+        }
+
+        delta1 = max1;
+        delta2 = max2;
+        cout << endl;
+
+
+        x1 = resh[0];
+        x2 = resh[1];
+        for (int i = 0; i < n; i++)
+            cout << setw(10) << resh[i] << "   ";
+        cout << setw(13) << delta1 << "   " << setw(13) << delta2 << "   " << setw(2) << k;
+        cout << endl;
+
+        k++;
+        if (k >= NIT)
+        {
+            cout << "\n   IER = 2 \n";
+            return NULL;
+            break;
+        }
+
+    } while (delta1 > eps || delta2 > eps);
+
+    return resh;
 }
 
 void printResult(double* res, int n) {
     if (res == NULL)
         return;
 
-    cout << "____" << endl;
+    cout << "____________" << endl;
     for (int i = 0; i < n; i++)
         cout << res[i] << endl;
 }

@@ -1,4 +1,4 @@
-#include "Newton.h"
+﻿#include "Newton.h"
 
 
 int main()
@@ -8,10 +8,11 @@ int main()
            x2 = 2;
 
     printResult(newton(n, x1, x2),n);
-    
+
     x2 = -2;
-    
-    printResult(newton(n, x1, x2),n);
+
+    printResult(newton(n, x1, x2), n);
+
 
     return 0;
 }

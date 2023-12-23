@@ -27,4 +27,6 @@ double* gauss(double** matrix, int n, int m);
 
 double* newton(int n, double x1, double x2);
 
+double* newton2(int n, double x1, double x2);
+
 void printResult(double* res, int n);
